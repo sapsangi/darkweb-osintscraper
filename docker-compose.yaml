@@ -1,0 +1,18 @@
+services:
+  tor-proxy:
+    image: dperson/torproxy
+    ports:
+      - "9050:9050" # SOCKS5 Proxy
+    restart: always
+
+  scraper-bot:
+    build: .
+    volumes:
+      - ./scripts:/app
+    depends_on:
+      - tor-proxy
+    environment:
+      - TOR_PROXY=socks5://tor-proxy:9050
+      - ELASTICSEARCH_URL=http://your-elk-ip:9200
+      - OPENCTI_URL=http://your-opencti-ip:8080
+      - OPENCTI_TOKEN=your-admin-token
